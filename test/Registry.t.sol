@@ -19,21 +19,21 @@ contract RegistryTest is Test {
     testMockedResolver = new TestMockedResolver(eas);
   }
 
-  function test_mocked_schema1() public {
-    string memory schema = "string TestingString";
+  function test_mocked_schema_review() public {
+    string memory schema = "string review, uints score";
     bool revocable = true;
 
     bytes32 uid = schemaRegistry.register(schema, testMockedResolver, revocable);
-    console2.log("Schema1 UID generated:");
+    console2.log("test_mocked_schema_review UID generated:");
     console2.logBytes32(uid);
   }
 
-  function test_mocked_schema2() public {
-    string memory schema = "bool status";
+  function test_mocked_schema_grant() public {
+    string memory schema = "string title";
     bool revocable = false;
 
     bytes32 uid = schemaRegistry.register(schema, testMockedResolver, revocable);
-    console2.log("Schema2 UID generated:");
+    console2.log("test_mocked_schema_grant UID generated:");
     console2.logBytes32(uid);
   }
 

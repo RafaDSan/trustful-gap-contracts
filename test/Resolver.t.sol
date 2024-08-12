@@ -8,61 +8,131 @@ import { ISchemaRegistry } from "../src/interfaces/ISchemaRegistry.sol";
 import { IEAS } from "../src/interfaces/IEAS.sol";
 import { TestMockedResolver } from "../src/resolver/TestMockedResolver.sol";
 
-contract RegistryTest is Test {
+contract ResolverTest is Test {
   IEAS eas = IEAS(0xC2679fBD37d54388Ce493F1DB75320D236e1815e);
   ISchemaRegistry schemaRegistry = ISchemaRegistry(0x0a7E2Ff54e76B8E6659aedc9103FB21c038050D0);
-  // IResolver resolver;
   TestMockedResolver testMockedResolver;
+  
 
- address deployer = address(1);
-    address user = address(2);
+    bytes32 public schemaId;
+    address deployer = 0xF977814e90dA44bFA03b6295A0616a897441aceC; //TODO: change address
 
     function setUp() public {
         vm.label(deployer, "deployer");
-        vm.label(user, "user");
         vm.startPrank(deployer);
         testMockedResolver = new TestMockedResolver(eas);
-        vm.stopPrank();
+        schemaId = schemaRegistry.register("bool isVerified", address(testMockedResolver), true);
     }
 
-    function testSetAttestationTitle() public {
-        vm.startPrank(deployer);
-        string memory title = "Test Title";
-        testMockedResolver.setAttestationTitle(title, true);
-        assertTrue(testMockedResolver.allowedAttestationTitles(title));
+  function test_mocked_attest() public {
         vm.stopPrank();
+        vm.prank(deployer);
+
+        AttestationRequest memory attestationRequest = AttestationRequest({
+            schema: schemaId,
+            data: AttestationRequestData({
+                recipient: deployer,
+                expirationTime: 0,
+                revocable: true,
+                refUID: bytes32(0),
+                data: abi.encode("Test review", 5),
+                value: 0
+            })
+        });
+
+        bytes32 attestedMockedReviewUID = eas.attest(attestationRequest);
+        assertTrue(attestedMockedReviewUID != bytes32(0));
     }
 
-    function testAttest() public {
-        vm.startPrank(user);
-        bytes32 schemaId = 0x0000000000000000000000000000000000000000000000000000000000000000; // Replace with actual schema ID
-        bytes memory data = abi.encode("Test data");
-        uint256 expirationTime = block.timestamp + 1 days;
-
-        bytes32 attestationId = testMockedResolver.attest(schemaId, data, expirationTime);
-        assertTrue(attestationId != bytes32(0));
+    function test_mocked_revoke() public {
         vm.stopPrank();
+        vm.prank(deployer);
+
+        AttestationRequest memory attestationRequest = AttestationRequest({
+            schema: schemaId,
+            data: AttestationRequestData({
+                recipient: deployer,
+                expirationTime: 0,
+                revocable: true,
+                refUID: bytes32(0),
+                data: abi.encode("Test review", 5),
+                value: 0
+            })
+        });
+
+        bytes32 attestedMockedReviewUID = eas.attest(attestationRequest);
+        assertTrue(attestedMockedReviewUID != bytes32(0));
+
+        Attestation memory attestation = Attestation({
+            schema: schemaId,
+            uid: attestedMockedReviewUID,
+            attester: deployer,
+            recipient: deployer,
+            expirationTime: 0,
+            revocable: true,
+            revoked: false,
+            refUID: bytes32(0),
+            data: abi.encode("Test review", 5),
+            value: 0
+        });
+
+        bool revoked = eas.revoke(attestation);
+        assertTrue(revoked);
     }
 
-    function testMultiAttest() public {
-        vm.startPrank(user);
-        bytes32[] memory schemaIds = new bytes32[](2);
-        schemaIds[0] = 0x0000000000000000000000000000000000000000000000000000000000000000; // Replace with actual schema IDs
-        schemaIds[1] = 0x0000000000000000000000000000000000000000000000000000000000000001;
-
-        bytes[] memory data = new bytes[](2);
-        data[0] = abi.encode("Test data 1");
-        data[1] = abi.encode("Test data 2");
-
-        uint256[] memory expirationTimes = new uint256[](2);
-        expirationTimes[0] = block.timestamp + 1 days;
-        expirationTimes[1] = block.timestamp + 2 days;
-
-        bytes32[] memory attestationIds = testMockedResolver.multiAttest(schemaIds, data, expirationTimes);
-        assertEq(attestationIds.length, 2);
-        assertTrue(attestationIds[0] != bytes32(0));
-        assertTrue(attestationIds[1] != bytes32(0));
+    function test_mocked_attest_grant() public {
         vm.stopPrank();
+        vm.prank(deployer);
+
+        AttestationRequest memory attestationRequest = AttestationRequest({
+            schema: schemaId,
+            data: AttestationRequestData({
+                recipient: deployer,
+                expirationTime: 0,
+                revocable: true,
+                refUID: bytes32(0),
+                data: abi.encode("DAO Program"),
+                value: 0
+            })
+        });
+
+        bytes32 attestedMockedGrantUID = eas.attest(attestationRequest);
+        assertTrue(attestedMockedGrantUID != bytes32(0));
+    }
+
+    function test_mocked_attest_revoke_grant() public {
+        vm.stopPrank();
+        vm.prank(deployer);
+
+        AttestationRequest memory attestationRequest = AttestationRequest({
+            schema: schemaId,
+            data: AttestationRequestData({
+                recipient: deployer,
+                expirationTime: 0,
+                revocable: true,
+                refUID: bytes32(0),
+                data: abi.encode("DAO Program"),
+                value: 0
+            })
+        });
+
+        bytes32 attestedMockedGrantUID = eas.attest(attestationRequest);
+        assertTrue(attestedMockedGrantUID != bytes32(0));
+
+        Attestation memory attestation = Attestation({
+            schema: schemaId,
+            uid: attestedMockedGrantUID,
+            attester: deployer,
+            recipient: deployer,
+            expirationTime: 0,
+            revocable: true,
+            revoked: false,
+            refUID: bytes32(0),
+            data: abi.encode("DAO Program"),
+            value: 0
+        });
+
+        bool revoked = eas.revoke(attestation);
+        assertTrue(revoked);
     }
 }
-
