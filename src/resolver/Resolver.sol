@@ -1,13 +1,15 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.25;
 
+pragma solidity ^0.8.4;
+
+import { AccessDenied, InvalidEAS, InvalidLength, uncheckedInc } from "./../Common.sol";
 import { IEAS, Attestation } from "../interfaces/IEAS.sol";
-import { AccessDenied, InvalidEAS, InvalidLength, uncheckedInc } from "../Common.sol";
-import { IResolver } from "../interfaces/IResolver.sol";
+import { Semver } from "./../Semver.sol";
+import { IResolver } from "./../interfaces/IResolver.sol";
 
-/// @title Resolver
+/// @title SchemaResolver
 /// @notice The base schema resolver contract.
-abstract contract Resolver is IResolver {
+abstract contract Resolver is IResolver, Semver {
     error InsufficientValue();
     error NotPayable();
 
@@ -16,7 +18,7 @@ abstract contract Resolver is IResolver {
 
     /// @dev Creates a new resolver.
     /// @param eas The address of the global EAS contract.
-    constructor(IEAS eas) {
+    constructor(IEAS eas) Semver(1, 3, 0) {
         if (address(eas) == address(0)) {
             revert InvalidEAS();
         }
@@ -44,7 +46,7 @@ abstract contract Resolver is IResolver {
     }
 
     /// @inheritdoc IResolver
-    function attest(Attestation calldata attestation) external payable virtual onlyEAS returns (bool) {
+    function attest(Attestation calldata attestation) external payable onlyEAS returns (bool) {
         return onAttest(attestation, msg.value);
     }
 
@@ -86,7 +88,7 @@ abstract contract Resolver is IResolver {
     }
 
     /// @inheritdoc IResolver
-    function revoke(Attestation calldata attestation) external payable virtual onlyEAS returns (bool) {
+    function revoke(Attestation calldata attestation) external payable onlyEAS returns (bool) {
         return onRevoke(attestation, msg.value);
     }
 
