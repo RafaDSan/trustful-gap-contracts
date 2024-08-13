@@ -36,8 +36,6 @@ contract Resolver is IResolver, AccessControl {
 
   /// @inheritdoc IResolver
   function attest(Attestation calldata attestation) external payable onlyEAS returns (bool) {
-    // Prohibits the attestation expiration to be finite
-    if (attestation.expirationTime != NO_EXPIRATION_TIME) revert InvalidExpiration();
     string memory attestationData = abi.decode(attestation.data, (string));
     if (
       keccak256(abi.encodePacked(attestationData)) !=
@@ -50,8 +48,6 @@ contract Resolver is IResolver, AccessControl {
 
   /// @inheritdoc IResolver
   function revoke(Attestation calldata attestation) external payable onlyEAS returns (bool) {
-    // Schema to revoke managers
-
     return true;
   }
 }
