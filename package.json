@@ -22,14 +22,14 @@
   "scripts": {
     "clean": "rm -rf cache out",
     "build": "forge build",
-    "deploy": "forge create Resolver --rpc-url $RPC_URL --private-key $PRIVATE_KEY --constructor-args <EAS_ADDRESS>",
+    "deploy": "forge create Resolver --rpc-url $RPC_URL --private-key $PRIVATE_KEY --constructor-args 0xbD75f629A22Dc1ceD33dDA0b68c546A1c035c458",
     "test": "forge test",
     "lint": "bun run lint:sol && bun run prettier:check",
     "lint:sol": "forge fmt --check && bun solhint {script,src,test}/**/*.sol",
     "prettier:check": "prettier --check \"**/*.{json,md,yml}\" --ignore-path \".prettierignore\"",
     "prettier:write": "prettier --write \"**/*.{json,md,yml}\" --ignore-path \".prettierignore\"",
-    "test:registry": "forge test --match-test registry --fork-url $RPC_URL -vvv --via-ir",
-    "test:resolver": "forge test --match-test access_control --fork-url $RPC_URL -vvv --via-ir",
-    "test:attest": "forge test --match-test attestations --fork-url $RPC_URL -vvv --via-ir"
+    "test:registry": "forge test --match-test registry --fork-url $ARB_URL -vvv --via-ir",
+    "test:resolver": "forge test --match-test invalid --fork-url $ARB_URL -vvv --via-ir",
+    "test:attest": "forge test --match-test attestations --fork-url $ARB_URL -vvv --via-ir"
   }
 }

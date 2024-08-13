@@ -33,4 +33,4 @@ tab_width = 4
 wrap_comments = true
 
 [rpc_endpoints]
-ethsepolia = "YOUR_API_KEY_ETHSEPOLIA"
+arbitrumurl = "YOUR_API_KEY_ARBITRUM"
