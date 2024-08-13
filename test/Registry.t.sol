@@ -11,7 +11,6 @@ import { TestMockedResolver } from "../src/resolver/TestMockedResolver.sol";
 contract RegistryTest is Test {
   IEAS eas = IEAS(0xC2679fBD37d54388Ce493F1DB75320D236e1815e);
   ISchemaRegistry schemaRegistry = ISchemaRegistry(0x0a7E2Ff54e76B8E6659aedc9103FB21c038050D0);
-  // IResolver resolver;
   TestMockedResolver testMockedResolver;
 
   function setUp() public {
@@ -19,8 +18,8 @@ contract RegistryTest is Test {
     testMockedResolver = new TestMockedResolver(eas);
   }
 
-  function test_mocked_schema_review() public {
-    string memory schema = "string review, uints score";
+  function test_registry_mocked_schema_review() public {
+    string memory schema = "string review,uints score";
     bool revocable = true;
 
     bytes32 uid = schemaRegistry.register(schema, testMockedResolver, revocable);
@@ -28,7 +27,7 @@ contract RegistryTest is Test {
     console2.logBytes32(uid);
   }
 
-  function test_mocked_schema_grant() public {
+  function test_registry_mocked_schema_grant() public {
     string memory schema = "string title";
     bool revocable = false;
 
@@ -36,5 +35,4 @@ contract RegistryTest is Test {
     console2.log("test_mocked_schema_grant UID generated:");
     console2.logBytes32(uid);
   }
-
 }
