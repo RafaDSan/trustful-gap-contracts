@@ -33,4 +33,4 @@ tab_width = 4
 wrap_comments = true
 
 [rpc_endpoints]
-arbitrumurl = "YOUR_API_KEY_ARBITRUM"
+arbitrumsepolia = "YOUR_API_KEY_ARBITRUM"
