@@ -51,7 +51,6 @@ contract Resolver is IResolver, AccessControl {
   /// @inheritdoc IResolver
   function revoke(Attestation calldata attestation) external payable onlyEAS returns (bool) {
     // Schema to revoke managers
-    // TODO: Write something simple to be used in the resolver.t.sol
 
     return true;
   }
