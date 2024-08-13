@@ -36,13 +36,6 @@ contract Resolver is IResolver, AccessControl {
 
   /// @inheritdoc IResolver
   function attest(Attestation calldata attestation) external payable onlyEAS returns (bool) {
-    string memory attestationData = abi.decode(attestation.data, (string));
-    if (
-      keccak256(abi.encodePacked(attestationData)) !=
-      keccak256(abi.encodePacked("ValidAttestation"))
-    ) {
-      revert InvalidAttestationData();
-    }
     return true;
   }
 
