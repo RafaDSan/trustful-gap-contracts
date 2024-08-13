@@ -33,3 +33,4 @@ tab_width = 4
 wrap_comments = true
 
 [rpc_endpoints]
+arbitrumsepolia = "YOUR_API_KEY_ARBITRUM"
