@@ -2,7 +2,7 @@
 pragma solidity 0.8.25;
 
 import { Test, console2 } from "forge-std/src/Test.sol";
-import { Resolver } from "../src/resolver/Resolver.sol";
+import { Resolver } from "../src/Resolver.sol";
 import { IResolver } from "../src/interfaces/IResolver.sol";
 import { ISchemaRegistry } from "../src/interfaces/ISchemaRegistry.sol";
 import { IEAS, AttestationRequest, AttestationRequestData } from "../src/interfaces/IEAS.sol";
