@@ -3,7 +3,7 @@ pragma solidity 0.8.25;
 
 import { Test, console2 } from "forge-std/src/Test.sol";
 import { IEAS, AttestationRequest, AttestationRequestData } from "./../src/interfaces/IEAS.sol";
-import { Resolver } from "../src/resolver/Resolver.sol";
+import { Resolver } from "../src/Resolver.sol";
 import { ISchemaRegistry } from "../src/interfaces/ISchemaRegistry.sol";
 
 contract EASTest is Test {

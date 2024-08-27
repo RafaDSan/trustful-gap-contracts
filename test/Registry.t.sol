@@ -2,14 +2,14 @@
 pragma solidity 0.8.25;
 
 import { Test, console2 } from "forge-std/src/Test.sol";
-import { Resolver } from "../src/resolver/Resolver.sol";
+import { Resolver } from "../src/Resolver.sol";
 import { IResolver } from "../src/interfaces/IResolver.sol";
 import { ISchemaRegistry } from "../src/interfaces/ISchemaRegistry.sol";
 import { IEAS } from "../src/interfaces/IEAS.sol";
 import { IGrantRegistry } from "../src/interfaces/IGrantRegistry.sol";
 import { IBadgeRegistry } from "../src/interfaces/IBadgeRegistry.sol";
 import { ITrustfulResolver } from "../src/interfaces/ITrustfulResolver.sol";
-import { Resolver } from "../src/resolver/Resolver.sol";
+import { Resolver } from "../src/Resolver.sol";
 
 contract RegistryTest is Test {
   IEAS eas = IEAS(0xbD75f629A22Dc1ceD33dDA0b68c546A1c035c458);
