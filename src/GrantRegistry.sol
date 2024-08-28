@@ -63,7 +63,7 @@ contract GrantRegistry is IGrantRegistry, Ownable {
   }
 
   /// @inheritdoc IGrantRegistry
-  function getGrantee(bytes32 grantUID) public view returns (address) {
+  function getGranteeAddress(bytes32 grantUID) public view returns (address) {
     _grantExists(grantUID);
     return _grants[grantUID].grantee;
   }

@@ -55,7 +55,7 @@ contract Resolver is IResolver, Ownable {
 
     // fetching each data separately because the grantRegistry might be upgraded someday
     // and this way we allow backwards compatibility
-    address grantee = grantRegistry.getGrantee(grantUID);
+    address grantee = grantRegistry.getGranteeAddress(grantUID);
     uint256 grantProgramUID = grantRegistry.getGrantProgramUID(grantUID);
     IGrantRegistry.Status status = grantRegistry.getStatus(grantUID);
 
