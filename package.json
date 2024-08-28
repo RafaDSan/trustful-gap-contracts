@@ -31,6 +31,6 @@
     "test:grant": "forge test --match-test grant --fork-url $ARB_URL -vvv --via-ir",
     "test:registry": "forge test --match-test registry --fork-url $ARB_URL -vvv --via-ir",
     "test:resolver": "forge test --match-test resolver --fork-url $ARB_URL -vvv --via-ir",
-    "test:attest": "forge test --match-test attestations --fork-url $ARB_URL -vvv --via-ir"
+    "test:attest": "forge test --match-test attest --fork-url $ARB_URL -vvv --via-ir"
   }
 }
