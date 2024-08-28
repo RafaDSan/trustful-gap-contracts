@@ -54,6 +54,8 @@ contract GrantRegistryTest is Test {
 
     assert(uint256(grantRegistry.getStatus(grantUIDs[0])) == 1);
     assert(uint256(grantRegistry.getStatus(grantUIDs[1])) == 1);
+    assert(grantRegistry.getGranteeAddress(grantUIDs[0]) == grantees[0]);
+    assert(grantRegistry.getGrantProgramUID(grantUIDs[0]) == grantProgramUIDs[0]);
 
     grantRegistry.update(grantUIDs[0], 2);
     assert(uint256(grantRegistry.getStatus(grantUIDs[0])) == 2);
