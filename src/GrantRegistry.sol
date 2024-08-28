@@ -11,7 +11,9 @@ import { IEASResolver } from "./interfaces/IEASResolver.sol";
 /// The Grant Programs can issue and manage grants.
 contract GrantRegistry is IGrantRegistry, Ownable {
   /// The proxy address of the Karma EAS Resolver that stored the project owner on-chain.
-  address public immutable _projectResolver = 0x28BE0b0515be8BB8822aF1467A6613795E74717b;
+  address public immutable projectResolver = 0x28BE0b0515be8BB8822aF1467A6613795E74717b;
+  /// The global EAS contract.
+  address public immutable eas = 0xbD75f629A22Dc1ceD33dDA0b68c546A1c035c458;
 
   /// Map the grant UID to the grant data
   mapping(bytes32 => Grant) private _grants;
@@ -24,6 +26,8 @@ contract GrantRegistry is IGrantRegistry, Ownable {
     uint256[] calldata grantProgramUIDs,
     uint256[] calldata statuses
   ) external onlyOwner {
+    if (grantUIDs.length != grantProgramUIDs.length || grantUIDs.length != statuses.length)
+      revert InvalidArrayLength();
     for (uint256 i = 0; i < grantUIDs.length; i++) {
       register(grantUIDs[i], grantProgramUIDs[i], statuses[i]);
     }
@@ -31,11 +35,14 @@ contract GrantRegistry is IGrantRegistry, Ownable {
 
   /// @inheritdoc IGrantRegistry
   function register(bytes32 grantUID, uint256 grantProgramUID, uint256 status) public onlyOwner {
-    if (_grants[grantUID].grantee == address(0)) revert GrantAlreadyExists();
+    if (_grants[grantUID].grantee != address(0)) revert GrantAlreadyExists();
 
     // checks if the grantee exists on the Project Resolver
-    address grantee = IEASResolver(_projectResolver).projectOwner(grantUID);
+    IEASResolver.Attestation memory attestation = IEASResolver(eas).getAttestation(grantUID);
+    address grantee = IEASResolver(projectResolver).projectOwner(attestation.refUID);
     if (grantee == address(0)) revert InvalidGrantOwner();
+
+    _grants[grantUID] = Grant(grantee, grantProgramUID, Status(status));
 
     emit GrantRegistered(grantUID, grantProgramUID, grantee, status);
   }

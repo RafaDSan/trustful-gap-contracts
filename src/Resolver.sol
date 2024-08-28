@@ -19,7 +19,8 @@ contract Resolver is IResolver, Ownable {
   /// The global badge registry.
   IBadgeRegistry public badgeRegistry;
   /// The Trustful Resolver contract.
-  /// @dev set this to address zero to stop the contract from working.
+  /// @dev Set this to address zero to stop the contract from working.
+  /// NOTE: It's required to initialize this contract.
   ITrustfulResolver public trustfulResolver;
 
   /// @param _eas The address of the global EAS contract.

@@ -9,6 +9,8 @@ interface IGrantRegistry {
   error GrantNonExistent();
   /// Emitted when the grant owner is non-existent.
   error InvalidGrantOwner();
+  /// Emitted when the array length is invalid.
+  error InvalidArrayLength();
 
   /// Emitted when the grant is sucessfuly registered.
   event GrantRegistered(
