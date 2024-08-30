@@ -19,14 +19,15 @@ contract Resolver is IResolver, Ownable {
   /// The global badge registry.
   IBadgeRegistry public badgeRegistry;
   /// The Trustful Resolver contract.
-  /// @dev set this to address zero to stop the contract from working.
+  /// @dev Set this to address zero to stop the contract from working.
+  /// NOTE: It's required to initialize this contract.
   ITrustfulResolver public trustfulResolver;
 
   /// @param _eas The address of the global EAS contract.
   /// @param _grantRegistry The address of the global grant registry.
   /// @param _badgeRegistry The address of the global badge registry.
   constructor(address _eas, address _grantRegistry, address _badgeRegistry) Ownable(msg.sender) {
-    if (eas == address(0)) revert InvalidContractAddress();
+    if (_eas == address(0)) revert InvalidContractAddress();
     eas = _eas;
     grantRegistry = IGrantRegistry(_grantRegistry);
     badgeRegistry = IBadgeRegistry(_badgeRegistry);
@@ -46,15 +47,20 @@ contract Resolver is IResolver, Ownable {
   /// @inheritdoc IResolver
   function attest(Attestation calldata attestation) external payable onlyEAS returns (bool) {
     if (address(trustfulResolver) == address(0)) revert InvalidContractAddress();
+    if (attestation.recipient != msg.sender) revert InvalidGrantOwner();
+    if (attestation.expirationTime != 0) revert InvalidExpirationTime();
+    if (attestation.revocable != false) revert InvalidRevocability();
 
     (bytes32 grantUID, bytes32[] memory badgeIds, uint8[] memory badgesScores) = abi.decode(
       attestation.data,
       (bytes32, bytes32[], uint8[])
     );
 
+    if (attestation.refUID != grantUID) revert InvalidRefUID();
+
     // fetching each data separately because the grantRegistry might be upgraded someday
     // and this way we allow backwards compatibility
-    address grantee = grantRegistry.getGrantee(grantUID);
+    address grantee = grantRegistry.getGranteeAddress(grantUID);
     uint256 grantProgramUID = grantRegistry.getGrantProgramUID(grantUID);
     IGrantRegistry.Status status = grantRegistry.getStatus(grantUID);
 

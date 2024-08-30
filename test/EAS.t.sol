@@ -2,102 +2,64 @@
 pragma solidity 0.8.25;
 
 import { Test, console2 } from "forge-std/src/Test.sol";
-import { IEAS, AttestationRequest, AttestationRequestData } from "./../src/interfaces/IEAS.sol";
-import { Resolver } from "../src/Resolver.sol";
-import { ISchemaRegistry } from "../src/interfaces/ISchemaRegistry.sol";
+import { IEAS, AttestationRequest, AttestationRequestData } from "../src/interfaces/IEAS.sol";
 
 contract EASTest is Test {
-  IEAS eas = IEAS(0xbD75f629A22Dc1ceD33dDA0b68c546A1c035c458);
-  ISchemaRegistry schemaRegistry = ISchemaRegistry(0xA310da9c5B885E7fb3fbA9D66E9Ba6Df512b78eB);
-  Resolver resolver;
+  address deployer = 0x67eE5d3A5374849aDB4D80713a5765F164375F03;
 
-  address deployer = 0xa3b3b9eA33602914fbd5984Ec0937F4f41f7A3c2;
+  address public eas = 0xbD75f629A22Dc1ceD33dDA0b68c546A1c035c458;
 
   function setUp() public {
     vm.label(deployer, "deployer");
     vm.startPrank(deployer);
-    resolver = new Resolver(eas);
   }
 
-  function test_mocked_attestations() public {
-    bytes32[] memory uids = mocked_schemas_uids();
+  function test_attest_review() public {
+    bytes32 grantUID = 0x635c2d0642c81e3191e6eff8623ba601b7e22e832d7791712b6bc28d052ff2b5;
+    bytes32[] memory badgeIds = new bytes32[](7);
+    uint8[] memory badgeScores = new uint8[](7);
 
-    bytes32 attestedMockedReviewUID = test_attest_mocked_review(
-      uids[0],
-      deployer,
-      "ValidAttestation",
-      5
+    badgeIds[0] = 0xe02b7f93d209aa1a9708544eb17e46eee3a1f45fed0de720f4866e0caff148f8;
+    badgeIds[1] = 0x446d8276789167189130fb83fce2c7b401752249a46b7e001d517c972a680219;
+    badgeIds[2] = 0xb2cf2baa9cdf459fd115c1bac872e0c7318c71d1201da034ff34090bf5c9ead3;
+    badgeIds[3] = 0xe85f17539b1c37dce80ab28bd08ca41f0c3f04a997756426157561ccf3447efa;
+    badgeIds[4] = 0x8934465c22520a1367b2794d7c3448e531923564a89acf65fc1cb97d918eb9bd;
+    badgeIds[5] = 0xc7110d04cc11dd911b5c12d4a26449fd87d7b6bf92ffbe02d0cda65b161eacb9;
+    badgeIds[6] = 0x41fdc7e77ebf77189b683427e0c79506b9177b5ddad561f8e1d62b15f779dcfb;
+
+    badgeScores[0] = 1;
+    badgeScores[1] = 2;
+    badgeScores[2] = 3;
+    badgeScores[3] = 4;
+    badgeScores[4] = 5;
+    badgeScores[5] = 4;
+    badgeScores[6] = 3;
+
+    bytes memory data = abi.encode(grantUID, badgeIds, badgeScores);
+
+    IEAS EAS = IEAS(eas);
+    bytes32 schemaUID = 0xb3c719785e801f7efadf1d4f2473f7815a68474b4356d5fdc9be0213a0df5942;
+    address recipient = 0x67eE5d3A5374849aDB4D80713a5765F164375F03;
+    uint64 expirationTime = type(uint64).max;
+    bool revocable = false;
+    bytes32 refUID = 0x635c2d0642c81e3191e6eff8623ba601b7e22e832d7791712b6bc28d052ff2b5;
+    uint256 value = 0;
+
+    AttestationRequestData memory requestData = AttestationRequestData(
+      recipient,
+      expirationTime,
+      revocable,
+      refUID,
+      data,
+      value
     );
-    console2.log("test_mocked_review_attestation UID generated:");
-    console2.logBytes32(attestedMockedReviewUID);
-    assertTrue(attestedMockedReviewUID != bytes32(0));
 
-    bytes32 attestedMockedGrantUID = test_attest_mocked_grant(
-      uids[1],
-      deployer,
-      "ValidAttestation"
-    );
-    console2.log("test_mocked_grant_attestation UID generated:");
-    console2.logBytes32(attestedMockedGrantUID);
-    assertTrue(attestedMockedGrantUID != bytes32(0));
-  }
+    AttestationRequest memory request = AttestationRequest({
+      schema: schemaUID,
+      data: requestData
+    });
 
-  function mocked_schemas_uids() public returns (bytes32[] memory) {
-    bytes32[] memory uids = new bytes32[](2);
-
-    //Mocked Review schema
-    string memory schema = "string review,uints score";
-    bool revocable = true;
-    uids[0] = schemaRegistry.register(schema, resolver, revocable);
-
-    // Mocked Grant schema
-    schema = "string title";
-    revocable = false;
-    uids[1] = schemaRegistry.register(schema, resolver, revocable);
-
-    return uids;
-  }
-
-  function test_attest_mocked_review(
-    bytes32 schemaUID,
-    address recipient,
-    string memory review,
-    uint256 score
-  ) public returns (bytes32) {
-    return
-      eas.attest(
-        AttestationRequest({
-          schema: schemaUID,
-          data: AttestationRequestData({
-            recipient: recipient,
-            expirationTime: 0,
-            revocable: true,
-            refUID: bytes32(0),
-            data: abi.encode(review, score),
-            value: 0
-          })
-        })
-      );
-  }
-
-  function test_attest_mocked_grant(
-    bytes32 schemaUID,
-    address recipient,
-    string memory grantTitle
-  ) public returns (bytes32) {
-    return
-      eas.attest(
-        AttestationRequest({
-          schema: schemaUID,
-          data: AttestationRequestData({
-            recipient: recipient,
-            expirationTime: 0,
-            revocable: false,
-            refUID: bytes32(0),
-            data: abi.encode(grantTitle),
-            value: 0
-          })
-        })
-      );
+    bytes32 uid = EAS.attest(request);
+    console2.logBytes32(uid);
   }
 }
