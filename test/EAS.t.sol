@@ -38,9 +38,9 @@ contract EASTest is Test {
     bytes memory data = abi.encode(grantUID, badgeIds, badgeScores);
 
     IEAS EAS = IEAS(eas);
-    bytes32 schemaUID = 0xb3c719785e801f7efadf1d4f2473f7815a68474b4356d5fdc9be0213a0df5942;
+    bytes32 schemaUID = 0x02dc5a92e5634ce3d8dd933067df1b53f661b1a53bcf8f17110c7d1ff884621f;
     address recipient = 0x67eE5d3A5374849aDB4D80713a5765F164375F03;
-    uint64 expirationTime = type(uint64).max;
+    uint64 expirationTime = 0;
     bool revocable = false;
     bytes32 refUID = 0x635c2d0642c81e3191e6eff8623ba601b7e22e832d7791712b6bc28d052ff2b5;
     uint256 value = 0;
