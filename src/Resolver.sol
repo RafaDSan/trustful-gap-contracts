@@ -47,7 +47,7 @@ contract Resolver is IResolver, Ownable {
   /// @inheritdoc IResolver
   function attest(Attestation calldata attestation) external payable onlyEAS returns (bool) {
     if (address(trustfulResolver) == address(0)) revert InvalidContractAddress();
-    if (attestation.recipient != msg.sender) revert InvalidGrantOwner(); //Possibly the conditional checking for the grantee - The attestation.recipient is the same address that is calling the function indeed. 
+    if (attestation.recipient != msg.sender) revert InvalidGrantOwner(); 
     if (attestation.expirationTime != 0) revert InvalidExpirationTime();
     if (attestation.revocable != false) revert InvalidRevocability();
 
@@ -60,9 +60,7 @@ contract Resolver is IResolver, Ownable {
 
     // fetching each data separately because the grantRegistry might be upgraded someday
     // and this way we allow backwards compatibility
-
-    //Porbably remove this three
-    address grantee = grantRegistry.getGranteeAddress(grantUID);  
+    //address grantee = grantRegistry.getGranteeAddress(grantUID);  
     uint256 grantProgramUID = grantRegistry.getGrantProgramUID(grantUID);
     IGrantRegistry.Status status = grantRegistry.getStatus(grantUID);
 
